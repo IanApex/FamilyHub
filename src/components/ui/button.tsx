@@ -21,6 +21,11 @@ const buttonVariants = cva(
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
       },
+      // Touch-target rule (PRD prd.md:815/827): any control reachable on a touch
+      // device must be >= 44x44px at EVERY width, not only at lg:. Use `icon-lg`
+      // (size-11) for icon buttons and `min-h-11` for text controls. `icon-sm`/`sm`
+      // are for pointer-only affordances that never render below lg.
+      // Enforced by src/test/touch-target-rule.test.ts and e2e/touch-targets.spec.ts.
       size: {
         default: "h-10 px-4 py-2 has-[>svg]:px-3",
         sm: "h-9 rounded-lg gap-1.5 px-3 text-sm has-[>svg]:px-2.5",

@@ -150,10 +150,12 @@ test.describe("touch targets meet the 44px minimum", () => {
         /^Mark /,
         /^Complete /,
         /^Archive /,
-        // ChoreScopeSwitcher pills (chores-scope-switcher.tsx:10-14).
-        "Day",
-        "Week",
-        "Month",
+        "Add recurring chore",
+        // ChoreScopeSwitcher is isMobile-gated (chores-view.tsx:144), so its
+        // Day/Week/Month pills exist below 769px only — at 900px the board
+        // renders scope columns instead. Asserting them at both widths would
+        // fail on a control that legitimately is not there.
+        ...(width < 769 ? ["Day", "Week", "Month"] : []),
       ]);
     });
 

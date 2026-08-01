@@ -1,4 +1,4 @@
-import { Check, Pencil, Trash2 } from "lucide-react";
+import { Check, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { haptics } from "@/lib/haptics";
 import type { ListItem } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,10 @@ interface ListItemRowProps {
   onToggle: (completed: boolean) => void;
   onEdit: () => void;
   onDelete: () => void;
+  /** Passed from the parent rather than read via hook so the row stays
+   * presentational and both branches are testable without a matchMedia shim. */
+  isLargeScreen?: boolean;
+  onOpenActions?: () => void;
 }
 
 export function ListItemRow({
@@ -16,6 +20,8 @@ export function ListItemRow({
   onToggle,
   onEdit,
   onDelete,
+  isLargeScreen,
+  onOpenActions,
 }: ListItemRowProps) {
   return (
     <div className="flex min-h-14 items-center gap-2 rounded-lg border border-border bg-card p-2 shadow-sm">
@@ -33,7 +39,7 @@ export function ListItemRow({
           if (!item.completed) haptics.success(); // completing transition only
           onToggle(!item.completed);
         }}
-        className="flex min-w-0 flex-1 items-center gap-3 rounded-md px-2 py-2 text-left transition-colors hover:bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:min-h-11"
+        className="flex min-h-11 min-w-0 flex-1 items-center gap-3 rounded-md px-2 py-2 text-left transition-colors hover:bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <span
           className={cn(
@@ -56,26 +62,38 @@ export function ListItemRow({
           {item.text}
         </span>
       </button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-sm"
-        onClick={onEdit}
-        className="lg:min-h-11 lg:min-w-11"
-      >
-        <Pencil className="h-4 w-4" />
-        <span className="sr-only">Edit</span>
-      </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-sm"
-        onClick={onDelete}
-        className="lg:min-h-11 lg:min-w-11"
-      >
-        <Trash2 className="h-4 w-4" />
-        <span className="sr-only">Delete</span>
-      </Button>
+      {/* Two 44px icons would eat ~96px of a 390px row and leave a destructive
+          delete one thumb-slip from the toggle, so below lg they collapse into
+          a single overflow control. Its gate must match the actions sheet's
+          gate in list-detail-view exactly, or the 769-1023px band gets a
+          button that opens nothing. */}
+      {isLargeScreen ? (
+        <>
+          <Button type="button" variant="ghost" size="icon-lg" onClick={onEdit}>
+            <Pencil className="h-4 w-4" />
+            <span className="sr-only">Edit</span>
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-lg"
+            onClick={onDelete}
+          >
+            <Trash2 className="h-4 w-4" />
+            <span className="sr-only">Delete</span>
+          </Button>
+        </>
+      ) : (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-lg"
+          aria-label={`More actions for ${item.text}`}
+          onClick={onOpenActions}
+        >
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      )}
     </div>
   );
 }

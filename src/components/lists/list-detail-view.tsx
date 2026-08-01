@@ -1,4 +1,10 @@
-import { ArrowLeft, Plus, SlidersHorizontal } from "lucide-react";
+import {
+  ArrowLeft,
+  Pencil,
+  Plus,
+  SlidersHorizontal,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ApiException,
@@ -13,7 +19,7 @@ import {
   FloatingActionButton,
   MOBILE_FAB_SCROLL_PADDING,
 } from "@/components/shared";
-import { useIsMobile, useOnlineStatus } from "@/hooks";
+import { useIsLargeScreen, useIsMobile, useOnlineStatus } from "@/hooks";
 import type { ListItem, ListPreferences, UpdateListRequest } from "@/lib/types";
 import { Button } from "../ui/button";
 import { MobileSheet } from "../ui/mobile-sheet";
@@ -55,6 +61,10 @@ export function ListDetailView({
   const clearCompleted = useClearCompleted(listId);
   const updatePreferences = useUpdateListPreferences();
   const isMobile = useIsMobile();
+  // The row overflow control and its actions sheet share this one gate. Using
+  // isMobile (<=768) for either would give the 769-1023px band a control that
+  // opens nothing.
+  const isLargeScreen = useIsLargeScreen();
   const isOnline = useOnlineStatus();
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [managerOpen, setManagerOpen] = useState(false);
@@ -73,6 +83,11 @@ export function ListDetailView({
     mode: "create" | "edit";
     item: ListItem | null;
   } | null>(null);
+  // Row overflow ("More actions") sheet, and the item awaiting the edit sheet
+  // once it has finished closing — ListItemSheet is itself a vaul MobileSheet,
+  // so the two must not be open in the same tick.
+  const [actionsForItem, setActionsForItem] = useState<ListItem | null>(null);
+  const [pendingEditItem, setPendingEditItem] = useState<ListItem | null>(null);
   const list = listQuery.data?.data ?? null;
   const hasPreferences = preferences !== null;
   const familyShowCompletedDefault =
@@ -98,6 +113,20 @@ export function ListDetailView({
 
     return () => window.clearTimeout(timeoutId);
   }, [managerHandoffPending, optionsOpen]);
+
+  // Same fallback the manager handoff needs: if the actions sheet's close
+  // animation never reports back (reduced motion, interrupted transition), open
+  // the edit sheet anyway rather than stranding the handoff.
+  useEffect(() => {
+    if (pendingEditItem === null || actionsForItem !== null) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setItemSheet({ mode: "edit", item: pendingEditItem });
+      setPendingEditItem(null);
+    }, MOBILE_MANAGER_HANDOFF_FALLBACK_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [pendingEditItem, actionsForItem]);
 
   if (listQuery.isLoading) {
     return (
@@ -287,6 +316,8 @@ export function ListDetailView({
                         }
                         onEdit={() => setItemSheet({ mode: "edit", item })}
                         onDelete={() => deleteItem.mutate(item.id)}
+                        isLargeScreen={isLargeScreen}
+                        onOpenActions={() => setActionsForItem(item)}
                       />
                     ))}
                   </div>
@@ -336,6 +367,51 @@ export function ListDetailView({
                   }
                   onClearCompleted={() => clearCompleted.mutate()}
                 />
+              </div>
+            </MobileSheet>
+          )}
+
+          {/* Gated on !isLargeScreen — the exact complement of the row's
+              overflow button, so the control and the sheet it opens can never
+              disagree about which band they belong to. */}
+          {!isLargeScreen && (
+            <MobileSheet
+              isOpen={actionsForItem !== null}
+              onClose={() => setActionsForItem(null)}
+              title={actionsForItem?.text ?? "Item actions"}
+              initialHeight="half"
+              // Suppress focus restoration mid-handoff so focus doesn't bounce
+              // back to the row before the edit sheet is ready.
+              restoreFocusOnClose={pendingEditItem === null}
+              onAnimationEnd={(open) => {
+                if (!open && pendingEditItem !== null) {
+                  setItemSheet({ mode: "edit", item: pendingEditItem });
+                  setPendingEditItem(null);
+                }
+              }}
+            >
+              <div className="flex flex-col gap-2">
+                <Button
+                  variant="ghost"
+                  className="min-h-11 justify-start"
+                  onClick={() => {
+                    setPendingEditItem(actionsForItem);
+                    setActionsForItem(null);
+                  }}
+                >
+                  <Pencil className="mr-2 h-4 w-4" /> Edit
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="min-h-11 justify-start text-destructive"
+                  onClick={() => {
+                    const item = actionsForItem;
+                    setActionsForItem(null);
+                    if (item) deleteItem.mutate(item.id);
+                  }}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" /> Delete
+                </Button>
               </div>
             </MobileSheet>
           )}

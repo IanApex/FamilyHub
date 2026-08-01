@@ -265,9 +265,14 @@ describe("RecipesView", () => {
     expect(toolbar).toContainElement(add);
     expect(screen.getAllByTestId("recipe-filter-bar")).toHaveLength(1);
     expect(screen.getByTestId("recipe-filter-bar")).toHaveClass("lg:flex");
-    expect(search).toHaveClass("lg:h-11");
-    expect(favorites).toHaveClass("lg:min-h-11");
-    expect(add).toHaveClass("lg:min-h-11");
+    // 44px at every width, not only at lg: the tablet band renders this same
+    // toolbar and gets none of the lg: rules.
+    expect(search).toHaveClass("h-11");
+    expect(favorites).toHaveClass("min-h-11");
+    expect(add).toHaveClass("min-h-11");
+    for (const el of [search, favorites, add]) {
+      expect(el.className).not.toMatch(/\blg:(min-)?h-11\b/);
+    }
   });
 
   it("opens recipe detail from the library with cook-first content order and returns back", async () => {

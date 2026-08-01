@@ -128,7 +128,7 @@ export function FamilySettingsModal({
             size="icon"
             aria-label="Close"
             onClick={() => onOpenChange(false)}
-            className="h-8 w-8"
+            className="h-11 w-11"
           >
             <X className="h-4 w-4" />
           </Button>

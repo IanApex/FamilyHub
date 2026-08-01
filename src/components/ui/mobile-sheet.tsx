@@ -222,7 +222,7 @@ export function MobileSheet({
                   }
                   setSnap(isExpanded ? HALF_SNAP : FULL_SNAP);
                 }}
-                className="-my-2 rounded-full px-6 py-3"
+                className="-my-2 flex min-h-11 min-w-11 items-center justify-center rounded-full px-6"
               >
                 <span className="block h-1.5 w-10 rounded-full bg-muted-foreground/25" />
               </button>
@@ -238,7 +238,7 @@ export function MobileSheet({
             <button
               type="button"
               onClick={onCancel ?? onClose}
-              className="rounded-lg px-1 py-1 text-sm font-semibold text-primary"
+              className="-my-2 inline-flex min-h-11 min-w-11 items-center rounded-lg px-1 text-sm font-semibold text-primary"
             >
               {cancelLabel}
             </button>

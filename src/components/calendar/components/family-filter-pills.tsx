@@ -49,7 +49,7 @@ export function FamilyFilterPills() {
       <button
         onClick={handleToggleAll}
         className={cn(
-          "flex min-h-11 items-center px-2.5 py-1 rounded-full text-xs font-medium transition-all border",
+          "flex min-h-11 min-w-11 items-center justify-center px-2.5 py-1 rounded-full text-xs font-medium transition-all border",
           allSelected
             ? "bg-foreground text-background border-foreground"
             : noneSelected

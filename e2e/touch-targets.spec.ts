@@ -168,7 +168,11 @@ test.describe("touch targets meet the 44px minimum", () => {
         .click();
       // Both widths are below lg, so both get the single overflow control —
       // that is the point: one gate for the button and its sheet.
-      await assertMinimumTargets(page, [/^More actions/, "Milk"]);
+      await assertMinimumTargets(page, [
+        /^More actions/,
+        "Milk",
+        "Back to Lists",
+      ]);
     });
   }
 });

@@ -71,7 +71,7 @@ function ReorderRow({
         ref={upRef}
         type="button"
         variant="ghost"
-        size="icon-sm"
+        size="icon-lg"
         aria-label={`Move ${entry.name} up`}
         disabled={isFirst || isPending}
         onClick={() => onMoveUp(entry.id)}
@@ -85,7 +85,7 @@ function ReorderRow({
         ref={downRef}
         type="button"
         variant="ghost"
-        size="icon-sm"
+        size="icon-lg"
         aria-label={`Move ${entry.name} down`}
         disabled={isLast || isPending}
         onClick={() => onMoveDown(entry.id)}
@@ -202,7 +202,7 @@ function CategoryRow({
       <Button
         type="button"
         variant="ghost"
-        size="icon-sm"
+        size="icon-lg"
         aria-label={`Rename ${entry.name}`}
         onClick={() => onRenameStart(entry)}
         disabled={isDeletePending || isRenamePending}
@@ -213,7 +213,7 @@ function CategoryRow({
       <Button
         type="button"
         variant="ghost"
-        size="icon-sm"
+        size="icon-lg"
         aria-label={`Delete ${entry.name}`}
         onClick={() => onDeleteRequest(entry)}
         disabled={isDeletePending || isRenamePending}

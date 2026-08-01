@@ -35,6 +35,17 @@ export function ChoreRow({
 }: ChoreRowProps) {
   const showCadence = IMPLIED_BY[chore.cadence] !== activeScope;
 
+  // Shared by the checkoff and the row-body button below, so both stay on the
+  // same haptics path (success() on the completing transition only).
+  const toggleCompletion = () => {
+    if (chore.completed) {
+      onUncomplete?.();
+    } else {
+      haptics.success();
+      onComplete?.();
+    }
+  };
+
   return (
     <div
       data-testid={`chore-row-${chore.templateId}`}
@@ -59,48 +70,51 @@ export function ChoreRow({
             ? `Mark ${chore.title} incomplete`
             : `Mark ${chore.title} complete`
         }
-        onClick={() => {
-          if (chore.completed) {
-            onUncomplete?.();
-          } else {
-            haptics.success();
-            onComplete?.();
-          }
-        }}
+        onClick={toggleCompletion}
         className={cn(
-          "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 transition-colors lg:h-11 lg:w-11",
+          "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
           chore.completed
             ? "border-primary bg-primary text-primary-foreground"
             : "border-border bg-background text-muted-foreground hover:border-primary hover:text-primary",
         )}
       >
         {chore.completed ? (
-          <Check className="h-4 w-4 lg:h-5 lg:w-5" />
+          <Check className="h-5 w-5" />
         ) : (
-          <Circle className="h-4 w-4 lg:h-5 lg:w-5" />
+          <Circle className="h-5 w-5" />
         )}
       </button>
 
-      <div className="min-w-0 flex-1">
-        <p
+      {/* Raw <button> for the same haptics reason as the checkoff above: a
+          pressable would fire tap() on pointerdown and coalesce the success
+          pulse. Sibling of the checkoff and Archive — never a wrapper, which
+          would nest interactive elements. Its own aria-label keeps it from
+          colliding with the checkoff's "Mark <title> complete". */}
+      <button
+        type="button"
+        aria-label={`Complete ${chore.title}`}
+        onClick={toggleCompletion}
+        className="flex min-h-11 min-w-0 flex-1 flex-col justify-center text-left"
+      >
+        <span
           className={cn(
             "truncate text-sm font-semibold text-foreground",
             chore.completed && "text-muted-foreground line-through",
           )}
         >
           {chore.title}
-        </p>
+        </span>
         {showCadence && (
-          <p className="mt-1 text-xs font-medium text-muted-foreground">
+          <span className="mt-1 text-xs font-medium text-muted-foreground">
             {cadenceLabel(chore.cadence)}
-          </p>
+          </span>
         )}
-      </div>
+      </button>
 
       <Button
         type="button"
         variant="ghost"
-        size="icon-sm"
+        size="icon-lg"
         aria-label={`Archive ${chore.title}`}
         onClick={onArchive}
         className="text-muted-foreground hover:text-foreground"

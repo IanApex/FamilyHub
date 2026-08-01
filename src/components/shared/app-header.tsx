@@ -80,7 +80,7 @@ export function AppHeader() {
               type="button"
               onClick={goToToday}
               className={cn(
-                "rounded-lg px-2.5 py-1.5 text-sm leading-5 font-semibold transition-colors",
+                "inline-flex min-h-11 items-center rounded-lg px-2.5 text-sm leading-5 font-semibold transition-colors",
                 isViewingToday
                   ? "text-primary/50"
                   : "text-primary hover:bg-primary/10",

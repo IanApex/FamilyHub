@@ -22,10 +22,18 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
       },
       // Touch-target rule (PRD prd.md:815/827): any control reachable on a touch
-      // device must be >= 44x44px at EVERY width, not only at lg:. Use `icon-lg`
-      // (size-11) for icon buttons and `min-h-11` for text controls. `icon-sm`/`sm`
-      // are for pointer-only affordances that never render below lg.
-      // Enforced by src/test/touch-target-rule.test.ts and e2e/touch-targets.spec.ts.
+      // device must be >= 44x44px at EVERY width, not only at lg:. `default`,
+      // `lg` and `icon`/`icon-lg` all meet it on their own, so they are the safe
+      // choices below lg.
+      //
+      // `sm` (h-9) and `icon-sm` (size-9) are BELOW the minimum by design — they
+      // are compact variants for dense pointer-oriented chrome. They are not
+      // banned, but any use that can render below 1024px must add its own
+      // `min-h-11` (and `min-w-11` for short labels); see recipe-filter-bar.tsx
+      // and list-options-controls.tsx.
+      //
+      // Enforced by src/test/touch-target-rule.test.ts (bans lg:-only sizing)
+      // and e2e/touch-targets.spec.ts (measures real boxes at 390px and 900px).
       size: {
         default: "h-11 px-4 py-2 has-[>svg]:px-3",
         sm: "h-9 rounded-lg gap-1.5 px-3 text-sm has-[>svg]:px-2.5",

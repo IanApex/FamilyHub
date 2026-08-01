@@ -60,12 +60,16 @@ test.describe("Mobile Chores", () => {
     await page
       .getByRole("button", { name: /mark take out trash complete/i })
       .click();
-    await expect(row.locator("p").first()).toHaveClass(/line-through/);
+    await expect(
+      row.locator("button[aria-label^='Complete'] span").first(),
+    ).toHaveClass(/line-through/);
 
     await page
       .getByRole("button", { name: /mark take out trash incomplete/i })
       .click();
-    await expect(row.locator("p").first()).not.toHaveClass(/line-through/);
+    await expect(
+      row.locator("button[aria-label^='Complete'] span").first(),
+    ).not.toHaveClass(/line-through/);
 
     await page.getByRole("button", { name: /archive take out trash/i }).click();
     await expect(row).toBeHidden();
@@ -105,7 +109,9 @@ test.describe("Mobile Chores", () => {
       .filter({ hasText: "Feed the cat" })
       .first();
     await expect(row).toBeVisible();
-    await expect(row.locator("p").first()).not.toHaveClass(/line-through/);
+    await expect(
+      row.locator("button[aria-label^='Complete'] span").first(),
+    ).not.toHaveClass(/line-through/);
 
     // Hold the completion response open: for the next ~2.5s the only thing that
     // can flip the row to "done" is the optimistic cache update, not the server.
@@ -130,7 +136,9 @@ test.describe("Mobile Chores", () => {
 
     // Immediate acknowledgment: the strikethrough shows well before the delayed
     // response. Without the optimistic update this assertion would time out.
-    await expect(row.locator("p").first()).toHaveClass(/line-through/, {
+    await expect(
+      row.locator("button[aria-label^='Complete'] span").first(),
+    ).toHaveClass(/line-through/, {
       timeout: 1200,
     });
 
@@ -154,6 +162,8 @@ test.describe("Mobile Chores", () => {
       .locator('[data-testid^="chore-row-"]')
       .filter({ hasText: "Feed the cat" })
       .first();
-    await expect(reloadedRow.locator("p").first()).toHaveClass(/line-through/);
+    await expect(
+      reloadedRow.locator("button[aria-label^='Complete'] span").first(),
+    ).toHaveClass(/line-through/);
   });
 });

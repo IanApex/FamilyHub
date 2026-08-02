@@ -230,10 +230,30 @@ test.describe("Large-screen Calendar Month", () => {
   test("PageDown changes the visible month and restores the exact date", async ({
     page,
   }) => {
-    const cell = page.getByRole("gridcell").nth(10);
-    const before = await cell.getAttribute("data-date");
-    if (!before) throw new Error("Gridcell has no data-date");
-    await cell.focus();
+    // Pick the source deliberately instead of taking nth(10) and hoping. The
+    // failure this guards is: PageDown lands on a date the OUTGOING grid also
+    // renders as a trailing day, the effect focuses that node in the detached
+    // old grid while the new month loads, and focus is stranded on <body>.
+    // nth(10) only produces that geometry in some months — it did in Aug 2026
+    // (whose grid ends on Sep 5) and would not in others, so the test was a
+    // date-dependent roulette. Derive a source that always reproduces it.
+    const dates = await page
+      .getByRole("gridcell")
+      .evaluateAll((els) =>
+        els.map((el) => el.getAttribute("data-date") ?? "").filter(Boolean),
+      );
+    const grid = new Set(dates);
+    const visibleMonth = dates[Math.floor(dates.length / 2)].slice(0, 7);
+    // In the displayed month, so PageDown genuinely changes month, AND its
+    // next-month counterpart is already on screen.
+    const before =
+      dates.find(
+        (d) =>
+          d.startsWith(visibleMonth) &&
+          grid.has(formatLocalDate(addMonths(parseLocalDate(d), 1))),
+      ) ?? dates[10];
+
+    await page.locator(`[role="gridcell"][data-date="${before}"]`).focus();
     await page.keyboard.press("PageDown");
     const expected = formatLocalDate(addMonths(parseLocalDate(before), 1));
     await expect

@@ -553,7 +553,7 @@ export function MealPlanningPanel({
                   aria-describedby={
                     quickMealError ? mealNameErrorId : undefined
                   }
-                  className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm"
+                  className="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm"
                 />
                 {quickMealError ? (
                   <p

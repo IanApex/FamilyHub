@@ -332,7 +332,7 @@ export function ListItemSheet({
             onChange={(event) =>
               form.setValue("categoryId", event.target.value || null)
             }
-            className="h-10 w-full rounded-lg border border-input bg-background px-3 text-[15px] leading-5 shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="h-11 w-full rounded-lg border border-input bg-background px-3 text-[15px] leading-5 shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <option value="">Uncategorized</option>
             {list.categories.map((category) => (

@@ -81,7 +81,7 @@ export function MealMovePicker({
               aria-label="Day"
               value={dayIndex}
               onChange={(event) => setDayIndex(Number(event.target.value))}
-              className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm"
+              className="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm"
             >
               {board.days.map((day) => (
                 <option key={day.dayIndex} value={day.dayIndex}>
@@ -96,7 +96,7 @@ export function MealMovePicker({
               aria-label="Meal"
               value={mealType}
               onChange={(event) => setMealType(event.target.value as MealType)}
-              className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm"
+              className="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm"
             >
               {MEAL_TYPES.map((type) => (
                 <option key={type} value={type}>

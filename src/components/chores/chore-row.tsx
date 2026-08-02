@@ -62,6 +62,12 @@ export function ChoreRow({
         pointerdown, and the shared 40ms throttle would then coalesce away the
         haptics.success() pulse on click. The single completion pulse depends on
         no preceding tap. Guarded by the throttle-coupling test in haptics.test.ts.
+
+        One control, not two: the indicator and the text share this button, the
+        way ListItemRow's toggle does. A second sibling button over the text
+        would need a distinct accessible name, and any static one ("Complete
+        <title>") lies in the completed state, where activating it un-completes.
+        Archive stays a sibling — nothing interactive nests here.
       */}
       <button
         type="button"
@@ -71,44 +77,42 @@ export function ChoreRow({
             : `Mark ${chore.title} complete`
         }
         onClick={toggleCompletion}
-        className={cn(
-          "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
-          chore.completed
-            ? "border-primary bg-primary text-primary-foreground"
-            : "border-border bg-background text-muted-foreground hover:border-primary hover:text-primary",
-        )}
+        className="group flex min-h-11 min-w-0 flex-1 items-center gap-3 text-left"
       >
-        {chore.completed ? (
-          <Check className="h-5 w-5" />
-        ) : (
-          <Circle className="h-5 w-5" />
-        )}
-      </button>
-
-      {/* Raw <button> for the same haptics reason as the checkoff above: a
-          pressable would fire tap() on pointerdown and coalesce the success
-          pulse. Sibling of the checkoff and Archive — never a wrapper, which
-          would nest interactive elements. Its own aria-label keeps it from
-          colliding with the checkoff's "Mark <title> complete". */}
-      <button
-        type="button"
-        aria-label={`Complete ${chore.title}`}
-        onClick={toggleCompletion}
-        className="flex min-h-11 min-w-0 flex-1 flex-col justify-center text-left"
-      >
+        {/* group-hover, not hover: the indicator is no longer the hovered
+            element, so the affordance has to come from the button. */}
         <span
+          data-testid="chore-checkoff"
           className={cn(
-            "truncate text-sm font-semibold text-foreground",
-            chore.completed && "text-muted-foreground line-through",
+            "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+            chore.completed
+              ? "border-primary bg-primary text-primary-foreground"
+              : "border-border bg-background text-muted-foreground group-hover:border-primary group-hover:text-primary",
           )}
         >
-          {chore.title}
+          {chore.completed ? (
+            <Check className="h-5 w-5" />
+          ) : (
+            <Circle className="h-5 w-5" />
+          )}
         </span>
-        {showCadence && (
-          <span className="mt-1 text-xs font-medium text-muted-foreground">
-            {cadenceLabel(chore.cadence)}
+
+        <span className="flex min-w-0 flex-1 flex-col">
+          <span
+            data-testid="chore-title"
+            className={cn(
+              "truncate text-sm font-semibold text-foreground",
+              chore.completed && "text-muted-foreground line-through",
+            )}
+          >
+            {chore.title}
           </span>
-        )}
+          {showCadence && (
+            <span className="mt-1 text-xs font-medium text-muted-foreground">
+              {cadenceLabel(chore.cadence)}
+            </span>
+          )}
+        </span>
       </button>
 
       <Button

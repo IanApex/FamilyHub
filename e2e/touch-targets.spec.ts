@@ -147,8 +147,9 @@ test.describe("touch targets meet the 44px minimum", () => {
       const nav = await openAppAt(page, request, width);
       await nav.getByRole("button", { name: "Chores" }).click();
       await assertMinimumTargets(page, [
+        // One control per row: the indicator and the title share this button,
+        // so /^Mark / measures the whole tappable row body.
         /^Mark /,
-        /^Complete /,
         /^Archive /,
         "Add recurring chore",
         // ChoreScopeSwitcher is isMobile-gated (chores-view.tsx:144), so its
@@ -168,9 +169,12 @@ test.describe("touch targets meet the 44px minimum", () => {
         .click();
       // Both widths are below lg, so both get the single overflow control —
       // that is the point: one gate for the button and its sheet.
+      // Anchored: Playwright's string `name` is a case-insensitive *substring*
+      // match, so a bare "Milk" also matches "More actions for Milk" — the same
+      // trap the unit tests were switched to `exact: true` to avoid.
       await assertMinimumTargets(page, [
         /^More actions/,
-        "Milk",
+        /^Milk$/,
         "Back to Lists",
       ]);
     });

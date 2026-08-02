@@ -8,14 +8,11 @@ import {
   createChoreTemplate,
   createList,
   createListItem,
+  getChoresBoard,
   registerFamily,
   seedBrowserAuth,
 } from "./helpers/api-helpers";
-import {
-  clearStorage,
-  getTodayDateString,
-  waitForHydration,
-} from "./helpers/test-helpers";
+import { clearStorage, waitForHydration } from "./helpers/test-helpers";
 
 /** PRD prd.md:815/827 — the iOS HIG / platform touch minimum. */
 const MIN = 44;
@@ -76,11 +73,19 @@ async function openAppAt(
 
   // Seed real content — a freshly registered family has no chores and no lists,
   // so the chore/list selectors would match nothing and pass vacuously.
+  //
+  // activeFrom must come from the backend's own clock, not this process's:
+  // the board scopes "today" to the family clock, so a runner-derived date is
+  // one day ahead whenever the two disagree, the template is not yet active,
+  // and the board renders its empty state. That window is only a few hours
+  // wide, which is why this passed locally and on a mid-morning CI run before
+  // failing on an 03:26 UTC one.
+  const board = await getChoresBoard(request, registration.token);
   await createChoreTemplate(request, registration.token, {
     title: "Dishes",
     assignedToMemberId: registration.family.members[0].id,
     cadence: "DAILY",
-    activeFrom: getTodayDateString(),
+    activeFrom: board.today.periodStartDate,
   });
   const list = await createList(request, registration.token, {
     name: "Groceries",

@@ -201,7 +201,7 @@ function RecurrencePicker({
                   type="button"
                   onClick={() => toggleDay(key)}
                   className={cn(
-                    "w-9 h-9 rounded-full text-sm font-medium transition-colors",
+                    "h-11 w-11 rounded-full text-sm font-medium transition-colors",
                     isSelected
                       ? "bg-primary text-white"
                       : "bg-muted text-muted-foreground hover:bg-muted/80",

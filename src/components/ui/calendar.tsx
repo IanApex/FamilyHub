@@ -6,6 +6,12 @@ import { cn } from "@/lib/utils";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
+/**
+ * Rendered by DatePicker inside the event form, i.e. on a phone. Day cells,
+ * month nav and the weekday header are all sized to the 44px touch minimum, and
+ * the header row heights follow so the absolutely-positioned nav still fits.
+ * 7 x 44px + p-3 = 332px, which clears a 390px viewport.
+ */
 function Calendar({
   className,
   classNames,
@@ -19,21 +25,21 @@ function Calendar({
       classNames={{
         months: "relative flex flex-col gap-4",
         month: "flex flex-col gap-4",
-        month_caption: "flex justify-center items-center h-7",
+        month_caption: "flex justify-center items-center h-11",
         caption_label: "text-sm font-medium",
-        nav: "absolute inset-x-0 top-0 flex items-center justify-between h-7 px-1",
+        nav: "absolute inset-x-0 top-0 flex items-center justify-between h-11 px-1",
         button_previous: cn(
           buttonVariants({ variant: "ghost" }),
-          "h-7 w-7 p-0 opacity-70 hover:opacity-100",
+          "h-11 w-11 p-0 opacity-70 hover:opacity-100",
         ),
         button_next: cn(
           buttonVariants({ variant: "ghost" }),
-          "h-7 w-7 p-0 opacity-70 hover:opacity-100",
+          "h-11 w-11 p-0 opacity-70 hover:opacity-100",
         ),
         month_grid: "w-full border-collapse",
         weekdays: "flex",
         weekday:
-          "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
+          "text-muted-foreground rounded-md w-11 font-normal text-[0.8rem]",
         week: "flex w-full mt-2",
         day: cn(
           "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50",
@@ -43,7 +49,7 @@ function Calendar({
         ),
         day_button: cn(
           buttonVariants({ variant: "ghost" }),
-          "h-9 w-9 p-0 font-normal aria-selected:opacity-100",
+          "h-11 w-11 p-0 font-normal aria-selected:opacity-100",
         ),
         range_start: "day-range-start rounded-l-md",
         range_end: "day-range-end rounded-r-md",

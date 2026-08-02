@@ -128,7 +128,7 @@ function MobileEventDetail({
               size="sm"
               onClick={handleEditClick}
               disabled={isDeleting}
-              className="min-h-11 px-3 text-white hover:bg-white/20 hover:text-white"
+              className="px-3 text-white hover:bg-white/20 hover:text-white"
             >
               <Pencil className="mr-1.5 h-4 w-4" />
               Edit
@@ -138,7 +138,7 @@ function MobileEventDetail({
               size="sm"
               onClick={handleDeleteAttempt}
               disabled={isDeleting}
-              className="min-h-11 px-3 text-white hover:bg-white/20 hover:text-white"
+              className="px-3 text-white hover:bg-white/20 hover:text-white"
             >
               <Trash2 className="mr-1.5 h-4 w-4" />
               Delete

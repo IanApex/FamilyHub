@@ -251,7 +251,15 @@ export function MobileSheet({
             >
               {title}
             </Drawer.Title>
-            {headerRight ?? <div className="w-16" />}
+            {/* -my-2 for the same reason as the cancel button above: header
+                actions are 44px tall, but the row is py-3 around a 28px title.
+                Without absorbing the overflow into the padding, every sheet
+                with a headerRight action sits 16px taller than one without. */}
+            {headerRight ? (
+              <div className="-my-2 flex items-center">{headerRight}</div>
+            ) : (
+              <div className="w-16" />
+            )}
           </div>
 
           <div

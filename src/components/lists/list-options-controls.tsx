@@ -96,7 +96,6 @@ export function ListOptionsControls({
                 onClick={onManageCategories}
                 disabled={!categoriesOnline}
                 aria-label="Manage categories"
-                className="min-h-11"
               >
                 <Settings className="h-4 w-4" />
                 Manage categories

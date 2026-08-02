@@ -55,7 +55,7 @@ export function RecipeFilterBar({
           variant={favoritesOnly ? "default" : "outline"}
           size="sm"
           onClick={() => onFavoritesOnlyChange(!favoritesOnly)}
-          className="shrink-0 min-h-11 min-w-11"
+          className="shrink-0 min-w-11"
         >
           <Heart className={cn("h-4 w-4", favoritesOnly && "fill-current")} />
           Favorites only
@@ -66,7 +66,7 @@ export function RecipeFilterBar({
           variant={selectedTag === null ? "secondary" : "outline"}
           size="sm"
           onClick={() => onTagChange(null)}
-          className="shrink-0 min-h-11 min-w-11"
+          className="shrink-0 min-w-11"
         >
           All
         </Button>
@@ -80,7 +80,7 @@ export function RecipeFilterBar({
             onClick={() =>
               onTagChange(selectedTag === tag.value ? null : tag.value)
             }
-            className="shrink-0 min-h-11 min-w-11"
+            className="shrink-0 min-w-11"
           >
             {tag.label}
           </Button>

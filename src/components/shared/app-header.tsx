@@ -80,7 +80,11 @@ export function AppHeader() {
               type="button"
               onClick={goToToday}
               className={cn(
-                "inline-flex min-h-11 items-center rounded-lg px-2.5 text-sm leading-5 font-semibold transition-colors",
+                // -my-1 for the same reason as the Menu button beside it: the
+                // header row is min-h-16 with py-3, so a bare 44px control
+                // pushes it to 68px and the header would jump 4px whenever the
+                // Calendar module (the only one with a Today button) is opened.
+                "-my-1 inline-flex min-h-11 items-center rounded-lg px-2.5 text-sm leading-5 font-semibold transition-colors",
                 isViewingToday
                   ? "text-primary/50"
                   : "text-primary hover:bg-primary/10",

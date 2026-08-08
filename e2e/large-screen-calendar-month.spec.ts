@@ -237,11 +237,15 @@ test.describe("Large-screen Calendar Month", () => {
     // nth(10) only produces that geometry in some months — it did in Aug 2026
     // (whose grid ends on Sep 5) and would not in others, so the test was a
     // date-dependent roulette. Derive a source that always reproduces it.
-    const dates = await page
-      .getByRole("gridcell")
-      .evaluateAll((els) =>
-        els.map((el) => el.getAttribute("data-date") ?? "").filter(Boolean),
-      );
+    const cells = page.getByRole("gridcell");
+    // switchCalendarView returns after initiating the view change. Its fixed
+    // settling delay can expire while the month query still shows the loading
+    // state, and evaluateAll intentionally returns immediately for an empty
+    // locator. Wait on the first real month cell before reading the matrix.
+    await expect(cells.first()).toBeVisible();
+    const dates = await cells.evaluateAll((els) =>
+      els.map((el) => el.getAttribute("data-date") ?? "").filter(Boolean),
+    );
     const grid = new Set(dates);
     const visibleMonth = dates[Math.floor(dates.length / 2)].slice(0, 7);
     // In the displayed month, so PageDown genuinely changes month, AND its

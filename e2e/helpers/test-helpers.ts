@@ -5,6 +5,7 @@ import {
   OFFLINE_CACHE_KEY,
   OFFLINE_CACHE_STORE_NAME,
 } from "../../src/lib/offline/constants";
+import { parseLocalDate } from "../../src/lib/time-utils";
 import type { FamilyColor, FamilyMember } from "../../src/lib/types/family";
 
 /**
@@ -425,6 +426,46 @@ interface CreateEventOptions {
   allDay?: boolean;
 }
 
+async function selectDateFromPopover(
+  popover: Locator,
+  targetDate: Date,
+): Promise<void> {
+  const selectedDateValue = await popover
+    .locator('[data-selected="true"]')
+    .getAttribute("data-day");
+
+  expect(
+    selectedDateValue,
+    "Date picker should expose its selected date",
+  ).not.toBeNull();
+
+  const selectedDate = parseLocalDate(selectedDateValue ?? "");
+  const selectedMonthIndex =
+    selectedDate.getFullYear() * 12 + selectedDate.getMonth();
+  const targetMonthIndex =
+    targetDate.getFullYear() * 12 + targetDate.getMonth();
+  const monthOffset = targetMonthIndex - selectedMonthIndex;
+  const navigationName =
+    monthOffset > 0 ? "Go to the Next Month" : "Go to the Previous Month";
+
+  for (let step = 0; step < Math.abs(monthOffset); step += 1) {
+    await popover.getByRole("button", { name: navigationName }).click();
+  }
+
+  await expect(
+    popover.getByRole("grid", {
+      name: format(targetDate, "MMMM yyyy"),
+      exact: true,
+    }),
+  ).toBeVisible();
+
+  await popover
+    .getByRole("button", {
+      name: format(targetDate, "EEEE, MMMM do, yyyy"),
+    })
+    .click();
+}
+
 /**
  * Opens the Add Event modal, fills in event details, and submits.
  * Waits for modal to close after successful submission.
@@ -495,11 +536,7 @@ export async function createEvent(
         .locator("[data-radix-popper-content-wrapper]")
         .last();
       await expect(popover).toBeVisible();
-      const endDateLabel = format(
-        options.recurrence.endDate,
-        "EEEE, MMMM do, yyyy",
-      );
-      await popover.getByRole("button", { name: endDateLabel }).click();
+      await selectDateFromPopover(popover, options.recurrence.endDate);
     }
   }
 

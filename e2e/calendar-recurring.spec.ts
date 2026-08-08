@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { addDays, addMonths, format, startOfMonth } from "date-fns";
 import { registerFamily, seedBrowserAuth } from "./helpers/api-helpers";
 import {
   chooseScopeAndConfirm,
@@ -295,5 +296,21 @@ test.describe("Recurring Events", () => {
     // Navigate past the end date (2 more days forward, 3 total from today)
     await navigateDay(page, "next", 2);
     await expect(page.getByText("Workshop")).not.toBeVisible();
+  });
+
+  test("creates a recurring event with an end date outside the visible picker month", async ({
+    page,
+  }) => {
+    const endDate = addDays(startOfMonth(addMonths(new Date(), 1)), 7);
+
+    await createEvent(page, {
+      title: "Cross-month Workshop",
+      recurrence: { frequency: "daily", endDate },
+    });
+
+    const dialog = await openEventDetail(page, "Cross-month Workshop");
+    await expect(
+      dialog.getByText(`Daily until ${format(endDate, "MMM d, yyyy")}`),
+    ).toBeVisible();
   });
 });

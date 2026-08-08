@@ -372,9 +372,17 @@ describe("ListsView hub", () => {
       ).not.toBeInTheDocument();
     });
 
+    // Below lg (jsdom's matchMedia answers false to every query) the row's Edit
+    // and Delete live behind the single overflow control, and Edit is a
+    // sheet→sheet handoff: the actions sheet must finish closing before the
+    // edit sheet opens.
+    await user.click(
+      screen.getByRole("button", { name: "More actions for Popcorn" }),
+    );
     await user.click(screen.getByRole("button", { name: "Edit" }));
-    await user.clear(screen.getByLabelText("Item text"));
-    await typeAndWait(user, screen.getByLabelText("Item text"), "Kettle corn");
+    const itemText = await screen.findByLabelText("Item text");
+    await user.clear(itemText);
+    await typeAndWait(user, itemText, "Kettle corn");
     await user.click(screen.getByRole("button", { name: "Save item" }));
 
     expect(await screen.findByText("Kettle corn")).toBeInTheDocument();
@@ -385,6 +393,9 @@ describe("ListsView hub", () => {
     await user.click(screen.getByRole("button", { name: /^Kettle corn$/ }));
     expect(screen.getByText("Kettle corn")).not.toHaveClass("line-through");
 
+    await user.click(
+      screen.getByRole("button", { name: "More actions for Kettle corn" }),
+    );
     await user.click(screen.getByRole("button", { name: "Delete" }));
 
     await waitFor(() => {

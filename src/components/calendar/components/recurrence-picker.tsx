@@ -174,7 +174,7 @@ function RecurrencePicker({
           onChange={(e) =>
             handleOptionChange(e.target.value as RecurrenceOption)
           }
-          className="flex h-10 w-full rounded-lg border border-input bg-input px-3 py-2 text-[15px] leading-5 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="flex h-11 w-full rounded-lg border border-input bg-input px-3 py-2 text-[15px] leading-5 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <option value="none">Does not repeat</option>
           <option value="daily">Daily</option>
@@ -201,7 +201,7 @@ function RecurrencePicker({
                   type="button"
                   onClick={() => toggleDay(key)}
                   className={cn(
-                    "w-9 h-9 rounded-full text-sm font-medium transition-colors",
+                    "h-11 w-11 rounded-full text-sm font-medium transition-colors",
                     isSelected
                       ? "bg-primary text-white"
                       : "bg-muted text-muted-foreground hover:bg-muted/80",

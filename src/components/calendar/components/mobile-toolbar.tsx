@@ -56,7 +56,7 @@ export function MobileToolbar({ members }: MobileToolbarProps) {
             aria-label={ariaLabel}
             onClick={() => setCalendarView(view)}
             className={cn(
-              "flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-sm leading-none font-semibold transition-colors",
+              "flex h-11 min-w-11 items-center justify-center rounded-lg px-2 text-sm leading-none font-semibold transition-colors",
               calendarView === view
                 ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
                 : "text-muted-foreground hover:text-foreground",
@@ -91,9 +91,15 @@ export function MobileToolbar({ members }: MobileToolbarProps) {
       {/* Member Filter Dots — the only elastic group in the row. The switcher and
           prev/next are fixed-width essentials, and the row's ancestor is
           overflow-hidden (calendar-module.tsx), so without min-w-0 + a scroller
-          here the last members' dots are clipped and unreachable: at 375px a
-          three-member family loses 25px, a five-member one 113px. Same
-          scroll-don't-clip pattern as MemberChipRow on Home. */}
+          here the last members' dots are clipped and unreachable. Same
+          scroll-don't-clip pattern as MemberChipRow on Home.
+
+          The row genuinely cannot fit 44px controls plus two members at 390px,
+          and that is expected — it pans, it does not shrink. Budget at 390px:
+          358px of content (390 less px-4), less 24px for the two gap-3 gaps,
+          leaves 334px. The switcher takes 190px (4x44 pills + p-1 + gaps) and
+          prev/next 90px (2x44), leaving ~54px — one dot. Keep shrink-0 on each
+          dot or they squash back below 44px instead of scrolling. */}
       <div className="flex min-w-0 items-center gap-1 overflow-x-auto scrollbar-hide">
         {members.map((member) => {
           const isIncluded = filter.selectedMembers.includes(member.id);
@@ -103,7 +109,7 @@ export function MobileToolbar({ members }: MobileToolbarProps) {
               type="button"
               onClick={() => toggleMember(member.id)}
               aria-label={`${member.name} filter`}
-              className="shrink-0 rounded-full p-2 transition-colors hover:bg-muted"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-muted"
             >
               <MemberAvatar
                 name={member.name}

@@ -70,7 +70,7 @@ export function WeekHeader({
           <Button
             type="button"
             variant="ghost"
-            size="icon-sm"
+            size="icon-lg"
             aria-label="Previous week"
             onClick={() =>
               onWeekChange(formatLocalDate(addWeeksLocal(currentStart, -1)))
@@ -81,7 +81,7 @@ export function WeekHeader({
           <Button
             type="button"
             variant="ghost"
-            size="icon-sm"
+            size="icon-lg"
             aria-label="Next week"
             onClick={() =>
               onWeekChange(formatLocalDate(addWeeksLocal(currentStart, 1)))

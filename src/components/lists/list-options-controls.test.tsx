@@ -95,22 +95,32 @@ describe("ListOptionsControls — Manage categories entry", () => {
 });
 
 describe("ListOptionsControls — large-screen touch targets", () => {
-  it("sizes every interactive option control to at least 44px at lg", () => {
+  it("sizes every interactive option control to at least 44px at every width", () => {
     renderControls({ clearCompletedDisabled: false });
 
-    expect(screen.getByLabelText("Categories")).toHaveClass("lg:min-h-11");
-    expect(screen.getByLabelText("Completed items")).toHaveClass("lg:min-h-11");
+    // The selects carry the height directly; the rest use min-h-11. None may be
+    // lg:-conditional — that pattern is what left phones at 36-40px.
+    expect(screen.getByLabelText("Categories")).toHaveClass("h-11");
+    expect(screen.getByLabelText("Completed items")).toHaveClass("h-11");
     expect(
       screen.getByRole("button", { name: /manage categories/i }),
-    ).toHaveClass("lg:min-h-11");
+    ).toHaveClass("min-h-11");
 
     const familyDefaultCheckbox = screen.getByRole("checkbox", {
       name: /show completed by default/i,
     });
-    expect(familyDefaultCheckbox.closest("label")).toHaveClass("lg:min-h-11");
+    expect(familyDefaultCheckbox.closest("label")).toHaveClass("min-h-11");
 
     expect(
       screen.getByRole("button", { name: /remove all completed/i }),
-    ).toHaveClass("lg:min-h-11");
+    ).toHaveClass("min-h-11");
+
+    for (const el of [
+      screen.getByLabelText("Categories"),
+      screen.getByRole("button", { name: /manage categories/i }),
+      screen.getByRole("button", { name: /remove all completed/i }),
+    ]) {
+      expect(el.className).not.toContain("lg:min-h-11");
+    }
   });
 });

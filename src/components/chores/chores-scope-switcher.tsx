@@ -30,7 +30,7 @@ export function ChoreScopeSwitcher({
           aria-pressed={value === option.key}
           onClick={() => onChange(option.key)}
           className={cn(
-            "min-h-10 rounded-md px-3 text-sm font-semibold transition-colors",
+            "min-h-11 rounded-md px-3 text-sm font-semibold transition-colors",
             value === option.key
               ? "bg-background text-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground",

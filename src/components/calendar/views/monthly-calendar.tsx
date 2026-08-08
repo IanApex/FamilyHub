@@ -456,9 +456,21 @@ function MonthlyCalendarLarge({
     ) {
       return;
     }
-    const target = weeksEl?.querySelector<HTMLElement>(
-      `[data-date="${formatLocalDate(focusedDate)}"]`,
-    );
+    // isConnected is load-bearing. `weeksEl` is state, so on the render where
+    // the month's query goes into flight it still holds the DETACHED old grid:
+    // the isLoading branch unmounts it, but setWeeksEl(null) only lands on the
+    // next render. Without this check the query below searches that dead node,
+    // and it FINDS the target whenever the outgoing matrix carried that date as
+    // an adjacent-month day — the Aug 2026 grid ends on Sep 5, so PageDown from
+    // Aug 5 hits it exactly. focus() on a detached node is a silent no-op, so
+    // the request got consumed while focus sat on <body>, and the remount had
+    // nothing left to restore. Keyboard nav was then dead until the user tabbed
+    // back in. Guarded by the PageDown case in large-screen-calendar-month.
+    const target = weeksEl?.isConnected
+      ? weeksEl.querySelector<HTMLElement>(
+          `[data-date="${formatLocalDate(focusedDate)}"]`,
+        )
+      : null;
     // The state update can render once against the old matrix before the parent
     // month change lands. Do not clear the request until the target exists.
     if (!target) return;
@@ -473,9 +485,14 @@ function MonthlyCalendarLarge({
     const justClosed = wasDetailOpen.current && !isEventDetailOpen;
     wasDetailOpen.current = isEventDetailOpen;
     if (!justClosed || !pendingModalReturnDate.current) return;
-    const target = weeksEl?.querySelector<HTMLElement>(
-      `[data-date="${formatLocalDate(pendingModalReturnDate.current)}"]`,
-    );
+    // Same detached-weeksEl hazard as the month restore above: if the grid is
+    // swapped for the loading skeleton while the modal is open, this state still
+    // points at the old node and focus() would quietly do nothing.
+    const target = weeksEl?.isConnected
+      ? weeksEl.querySelector<HTMLElement>(
+          `[data-date="${formatLocalDate(pendingModalReturnDate.current)}"]`,
+        )
+      : null;
     if (!target) return;
     target.focus();
     pendingModalReturnDate.current = null;

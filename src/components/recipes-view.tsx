@@ -207,7 +207,7 @@ export function RecipesView() {
             {selectedRecipeId === null ? (
               <Button
                 type="button"
-                className="ml-auto lg:min-h-11"
+                className="ml-auto min-h-11"
                 onClick={() => setIsCreateSheetOpen(true)}
               >
                 Add recipe

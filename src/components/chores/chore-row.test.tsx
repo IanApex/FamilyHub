@@ -45,19 +45,59 @@ describe("ChoreRow haptics", () => {
   });
 });
 
-it("grows the checkoff control to at least 44px at lg+", () => {
-  render(
-    <ChoreRow chore={baseChore} onComplete={vi.fn()} onUncomplete={vi.fn()} />,
+it("sizes the checkoff at 44px unconditionally, not only at lg", () => {
+  render(<ChoreRow chore={baseChore} onComplete={() => {}} />);
+  const checkoff = screen.getByTestId("chore-checkoff");
+  expect(checkoff.className).toContain("h-11");
+  expect(checkoff.className).toContain("w-11");
+  expect(checkoff.className).not.toContain("lg:h-11");
+  // The tappable control is the button wrapping it, not the indicator itself.
+  expect(screen.getByRole("button", { name: /^Mark / }).className).toContain(
+    "min-h-11",
   );
+});
 
-  const checkoff = screen.getByRole("button", {
-    name: /mark dishes complete/i,
-  });
+it("exposes exactly one completion control, labelled for the current state", () => {
+  const { rerender } = render(
+    <ChoreRow chore={baseChore} onComplete={() => {}} />,
+  );
+  expect(screen.getAllByRole("button", { name: /^Mark / })).toHaveLength(1);
+  expect(screen.queryByRole("button", { name: /^Complete / })).toBeNull();
 
-  expect(checkoff.className).toContain("h-9");
-  expect(checkoff.className).toContain("w-9");
-  expect(checkoff.className).toContain("lg:h-11");
-  expect(checkoff.className).toContain("lg:w-11");
+  // A static label would still read "Complete Dishes" here while activating it
+  // un-completes the chore.
+  rerender(
+    <ChoreRow
+      chore={{ ...baseChore, completed: true }}
+      onUncomplete={() => {}}
+    />,
+  );
+  expect(
+    screen.getByRole("button", { name: "Mark Dishes incomplete" }),
+  ).toBeInTheDocument();
+});
+
+it("lets the row body complete the chore", async () => {
+  const onComplete = vi.fn();
+  render(<ChoreRow chore={baseChore} onComplete={onComplete} />);
+  // The title text sits inside the toggle, so tapping it completes the chore.
+  await userEvent.click(screen.getByTestId("chore-title"));
+  expect(onComplete).toHaveBeenCalledTimes(1);
+});
+
+it("keeps Archive separate from the row-body target", async () => {
+  const onComplete = vi.fn();
+  const onArchive = vi.fn();
+  render(
+    <ChoreRow
+      chore={baseChore}
+      onComplete={onComplete}
+      onArchive={onArchive}
+    />,
+  );
+  await userEvent.click(screen.getByRole("button", { name: /^Archive / }));
+  expect(onArchive).toHaveBeenCalledTimes(1);
+  expect(onComplete).not.toHaveBeenCalled();
 });
 
 describe("ChoreRow cadence label", () => {

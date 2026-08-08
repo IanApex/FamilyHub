@@ -20,7 +20,9 @@ describe("ListItemRow haptics", () => {
         onDelete={vi.fn()}
       />,
     );
-    await userEvent.click(screen.getByRole("button", { name: /milk/i }));
+    await userEvent.click(
+      screen.getByRole("button", { name: baseItem.text, exact: true }),
+    );
     expect(success).toHaveBeenCalledTimes(1);
   });
 
@@ -34,31 +36,45 @@ describe("ListItemRow haptics", () => {
         onDelete={vi.fn()}
       />,
     );
-    await userEvent.click(screen.getByRole("button", { name: /milk/i }));
+    await userEvent.click(
+      screen.getByRole("button", { name: baseItem.text, exact: true }),
+    );
     expect(success).not.toHaveBeenCalled();
   });
 });
 
-describe("ListItemRow large-screen touch targets", () => {
-  it("gives the toggle and item action buttons 44px targets at lg", () => {
-    render(
-      <ListItemRow
-        item={baseItem}
-        onToggle={vi.fn()}
-        onEdit={vi.fn()}
-        onDelete={vi.fn()}
-      />,
-    );
+const rowProps = {
+  item: baseItem,
+  onToggle: () => {},
+  onEdit: () => {},
+  onDelete: () => {},
+};
 
-    expect(screen.getByRole("button", { name: /milk/i })).toHaveClass(
-      "lg:min-h-11",
-    );
-    for (const name of [/edit/i, /delete/i]) {
-      expect(screen.getByRole("button", { name })).toHaveClass(
-        "lg:min-h-11",
-        "lg:min-w-11",
-      );
-    }
+describe("ListItemRow touch targets", () => {
+  it("sizes the toggle at 44px unconditionally", () => {
+    render(<ListItemRow {...rowProps} />);
+    const toggle = screen.getByRole("button", {
+      name: baseItem.text,
+      exact: true,
+    });
+    expect(toggle.className).toContain("min-h-11");
+    expect(toggle.className).not.toContain("lg:min-h-11");
+  });
+
+  it("exposes one overflow control instead of two icons below lg", () => {
+    render(<ListItemRow {...rowProps} isLargeScreen={false} />);
+    expect(
+      screen.getByRole("button", { name: /^More actions/ }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Delete" })).toBeNull();
+  });
+
+  it("keeps inline Edit and Delete at lg and above", () => {
+    render(<ListItemRow {...rowProps} isLargeScreen />);
+    expect(screen.getByRole("button", { name: "Edit" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Delete" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^More actions/ })).toBeNull();
   });
 });
 
@@ -114,7 +130,9 @@ describe("ListItemRow haptics — real fire reaches the device", () => {
         onDelete={vi.fn()}
       />,
     );
-    await userEvent.click(screen.getByRole("button", { name: /milk/i }));
+    await userEvent.click(
+      screen.getByRole("button", { name: baseItem.text, exact: true }),
+    );
 
     expect(vibrate).toHaveBeenCalledWith([12, 40, 12]);
   });

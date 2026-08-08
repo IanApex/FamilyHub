@@ -302,7 +302,7 @@ export function MealComposerSheet({
                 <input
                   value={mealName}
                   onChange={(event) => setMealName(event.target.value)}
-                  className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm"
+                  className="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm"
                 />
               </label>
               <label className="block space-y-1">
@@ -312,7 +312,7 @@ export function MealComposerSheet({
                 <input
                   value={imageUrl}
                   onChange={(event) => setImageUrl(event.target.value)}
-                  className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm"
+                  className="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm"
                 />
               </label>
               <label className="block space-y-1">

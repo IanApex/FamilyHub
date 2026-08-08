@@ -35,6 +35,17 @@ export function ChoreRow({
 }: ChoreRowProps) {
   const showCadence = IMPLIED_BY[chore.cadence] !== activeScope;
 
+  // Shared by the checkoff and the row-body button below, so both stay on the
+  // same haptics path (success() on the completing transition only).
+  const toggleCompletion = () => {
+    if (chore.completed) {
+      onUncomplete?.();
+    } else {
+      haptics.success();
+      onComplete?.();
+    }
+  };
+
   return (
     <div
       data-testid={`chore-row-${chore.templateId}`}
@@ -51,6 +62,12 @@ export function ChoreRow({
         pointerdown, and the shared 40ms throttle would then coalesce away the
         haptics.success() pulse on click. The single completion pulse depends on
         no preceding tap. Guarded by the throttle-coupling test in haptics.test.ts.
+
+        One control, not two: the indicator and the text share this button, the
+        way ListItemRow's toggle does. A second sibling button over the text
+        would need a distinct accessible name, and any static one ("Complete
+        <title>") lies in the completed state, where activating it un-completes.
+        Archive stays a sibling — nothing interactive nests here.
       */}
       <button
         type="button"
@@ -59,48 +76,49 @@ export function ChoreRow({
             ? `Mark ${chore.title} incomplete`
             : `Mark ${chore.title} complete`
         }
-        onClick={() => {
-          if (chore.completed) {
-            onUncomplete?.();
-          } else {
-            haptics.success();
-            onComplete?.();
-          }
-        }}
-        className={cn(
-          "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 transition-colors lg:h-11 lg:w-11",
-          chore.completed
-            ? "border-primary bg-primary text-primary-foreground"
-            : "border-border bg-background text-muted-foreground hover:border-primary hover:text-primary",
-        )}
+        onClick={toggleCompletion}
+        className="group flex min-h-11 min-w-0 flex-1 items-center gap-3 text-left"
       >
-        {chore.completed ? (
-          <Check className="h-4 w-4 lg:h-5 lg:w-5" />
-        ) : (
-          <Circle className="h-4 w-4 lg:h-5 lg:w-5" />
-        )}
-      </button>
-
-      <div className="min-w-0 flex-1">
-        <p
+        {/* group-hover, not hover: the indicator is no longer the hovered
+            element, so the affordance has to come from the button. */}
+        <span
+          data-testid="chore-checkoff"
           className={cn(
-            "truncate text-sm font-semibold text-foreground",
-            chore.completed && "text-muted-foreground line-through",
+            "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+            chore.completed
+              ? "border-primary bg-primary text-primary-foreground"
+              : "border-border bg-background text-muted-foreground group-hover:border-primary group-hover:text-primary",
           )}
         >
-          {chore.title}
-        </p>
-        {showCadence && (
-          <p className="mt-1 text-xs font-medium text-muted-foreground">
-            {cadenceLabel(chore.cadence)}
-          </p>
-        )}
-      </div>
+          {chore.completed ? (
+            <Check className="h-5 w-5" />
+          ) : (
+            <Circle className="h-5 w-5" />
+          )}
+        </span>
+
+        <span className="flex min-w-0 flex-1 flex-col">
+          <span
+            data-testid="chore-title"
+            className={cn(
+              "truncate text-sm font-semibold text-foreground",
+              chore.completed && "text-muted-foreground line-through",
+            )}
+          >
+            {chore.title}
+          </span>
+          {showCadence && (
+            <span className="mt-1 text-xs font-medium text-muted-foreground">
+              {cadenceLabel(chore.cadence)}
+            </span>
+          )}
+        </span>
+      </button>
 
       <Button
         type="button"
         variant="ghost"
-        size="icon-sm"
+        size="icon-lg"
         aria-label={`Archive ${chore.title}`}
         onClick={onArchive}
         className="text-muted-foreground hover:text-foreground"

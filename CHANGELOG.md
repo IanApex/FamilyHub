@@ -1,5 +1,63 @@
 # Changelog
 
+## [0.3.26](https://github.com/joe-bor/FamilyHub/compare/family-hub-v0.3.25...family-hub-v0.3.26) (2026-08-09)
+
+
+### Features
+
+* **calendar:** add prev/next to the mobile toolbar ([dbfd7e5](https://github.com/joe-bor/FamilyHub/commit/dbfd7e5113b314121faa72de52c7701cf3152d45))
+
+
+### Bug Fixes
+
+* **calendar:** give Schedule a real context label ([1efdf5b](https://github.com/joe-bor/FamilyHub/commit/1efdf5bc5f154407562167f67053bff926f965bb))
+* **calendar:** keep member filter dots reachable beside prev/next ([668be31](https://github.com/joe-bor/FamilyHub/commit/668be31e658d7210c1873c7443d833727e97dffb))
+* **calendar:** raise date-picker and weekday controls to 44px ([04543a5](https://github.com/joe-bor/FamilyHub/commit/04543a5b2ba653af66490b41f220b141211464ea))
+* **calendar:** raise mobile toolbar controls to 44px ([76c59d5](https://github.com/joe-bor/FamilyHub/commit/76c59d51ba83c02671bf744ff06873c8b8f05166))
+* **calendar:** restore month focus against the live grid, not a dead one ([53c3136](https://github.com/joe-bor/FamilyHub/commit/53c3136c1aa939aa68c5a6dc41a6bfed9d23a978))
+* **chores:** 44px checkoff and a tappable row body ([5599a50](https://github.com/joe-bor/FamilyHub/commit/5599a5097a71a9692b70d691dc85c93cfd4c9ca9))
+* **chores:** hide cadence labels the active scope already implies ([5fcf997](https://github.com/joe-bor/FamilyHub/commit/5fcf997d157eb5818fa4476bf291318753144ece))
+* **chores:** one completion control per row, labelled for its state ([5b31216](https://github.com/joe-bor/FamilyHub/commit/5b31216b2c5fd3fab1ee178c6a5303cd04c4615e))
+* **chores:** raise the scope switcher to a 44px target ([20051aa](https://github.com/joe-bor/FamilyHub/commit/20051aafdc6451f6d2a76cc8308864aa80dce18e))
+* **chores:** read progress counts from the API summary ([58824db](https://github.com/joe-bor/FamilyHub/commit/58824db7c542d71d19a5e7f9939a2aa9db565a0c))
+* **ci:** pin Playwright offline emulation ([f008fd4](https://github.com/joe-bor/FamilyHub/commit/f008fd47126a38c4905a83ed76871ce38aa724af))
+* **e2e:** navigate recurring end-date months ([f13f50b](https://github.com/joe-bor/FamilyHub/commit/f13f50bccc13872b3525de64b40af05e8f5d2f4c))
+* **e2e:** navigate recurring end-date months ([95f4d54](https://github.com/joe-bor/FamilyHub/commit/95f4d5426a6d525d37ed5224be673cda201aac13))
+* **e2e:** seed the touch-target chore from the backend clock ([699525a](https://github.com/joe-bor/FamilyHub/commit/699525ae1b59e1841641c7343d4a5713ab8980cb))
+* **e2e:** wait for month grid before reading cells ([84aba55](https://github.com/joe-bor/FamilyHub/commit/84aba55278b9d9783784277f18e0d4c4b75b1869))
+* **family:** give color validation a human message on both member forms ([fb3aeb5](https://github.com/joe-bor/FamilyHub/commit/fb3aeb5c45380445afc9452141375342bafa18d6))
+* **header:** keep the mobile header height stable on Calendar ([afef88f](https://github.com/joe-bor/FamilyHub/commit/afef88f4fdc361a412ab52704b435b4cce1238f8))
+* **header:** raise the Today control to a 44px touch target ([32bba91](https://github.com/joe-bor/FamilyHub/commit/32bba91ef1ceecc80970674fa78a6bc6310c6e00))
+* **home:** agree on cleared-day copy across both heroes ([291132a](https://github.com/joe-bor/FamilyHub/commit/291132a1994982c5c0e207c62453931d6793c0d8))
+* **home:** mark elapsed events "ended", not "done" ([30a221c](https://github.com/joe-bor/FamilyHub/commit/30a221cc1c19dfe4354ded2847def27b5e0df511))
+* **home:** mark finished events under a cleared hero ([84b9415](https://github.com/joe-bor/FamilyHub/commit/84b941572e63103430f24287430cd98aa9dac266))
+* **home:** stop claiming a previous visit on first run ([c4cb8fa](https://github.com/joe-bor/FamilyHub/commit/c4cb8fa799bf6848ac11d1f6eaea133adf65a683))
+* **lists:** hide the Uncategorized header when it stands alone ([2cc8531](https://github.com/joe-bor/FamilyHub/commit/2cc85314cc6cddd5c2a740d2bda36f9226e0e4ca))
+* **lists:** raise category manager controls to 44px targets ([b6e5e3a](https://github.com/joe-bor/FamilyHub/commit/b6e5e3aa55d07a400600df4fb0de12d250fe67ed))
+* **lists:** single 44px overflow control for row actions below lg ([f19976d](https://github.com/joe-bor/FamilyHub/commit/f19976d880f7aea19968958570f73f58546f0eb9))
+* **meals:** bring today into view without moving the Sunday anchor ([1a07845](https://github.com/joe-bor/FamilyHub/commit/1a078456cc3d3ccab7ba7576f09ce9830316f312))
+* **mobile:** meet the 44px touch-target minimum below lg ([32ffea2](https://github.com/joe-bor/FamilyHub/commit/32ffea2bea3f2a8ef9496d607a16405996c37753))
+* **settings:** replace Danger Zone jargon with plain language ([65c87ea](https://github.com/joe-bor/FamilyHub/commit/65c87ea15ceeccfdd59016fa15accda05349014b))
+* **ui:** close out remaining sub-44px touch targets ([c6465eb](https://github.com/joe-bor/FamilyHub/commit/c6465eb98dd86a470f99a59c8419efdb41e0fd42))
+* **ui:** make every Button size meet the 44px minimum ([73794ce](https://github.com/joe-bor/FamilyHub/commit/73794ce2ef20d479bc4ebbfc3d9c14b3b0efbbc3))
+* **ui:** raise hand-rolled selects and inputs to 44px ([530502c](https://github.com/joe-bor/FamilyHub/commit/530502cbbf3a23dd0da408ae1ae0bfad06534dc7))
+* **ui:** raise remaining below-lg sm controls and document the size rule ([38f209e](https://github.com/joe-bor/FamilyHub/commit/38f209e18e8d0027b383fb9e79cb2bb7c30110d9))
+* **ui:** state list and chore progress once, consistently ([7b3aa8a](https://github.com/joe-bor/FamilyHub/commit/7b3aa8a97b0dc96b4f60e55a8d856db393e588dc))
+
+
+### Documentation
+
+* **e2e:** document recurring end-date CI fix ([74cbce1](https://github.com/joe-bor/FamilyHub/commit/74cbce11e72d273b36806418c7bc0048d457d2e9))
+* **e2e:** plan recurring end-date CI fix ([f6c8bb5](https://github.com/joe-bor/FamilyHub/commit/f6c8bb556ddc72745de459c45ee8f40cb34b4a26))
+* **home:** correct what getLastSeen() actually distinguishes ([577b400](https://github.com/joe-bor/FamilyHub/commit/577b4004c38b9c52ef286669c8d7136380c10757))
+
+
+### Tests
+
+* **calendar:** cover mobile period navigation in all views ([160cf4f](https://github.com/joe-bor/FamilyHub/commit/160cf4f7eb4013acf255539d2e4da0c4755255f8))
+* **ui:** ban lg:-only touch-target sizing ([4f8dcf1](https://github.com/joe-bor/FamilyHub/commit/4f8dcf1658af2fd9cf97b7ac30aa72fff88c4305))
+* **ui:** close two holes in the touch-target rule ([563814e](https://github.com/joe-bor/FamilyHub/commit/563814e81be287a073607e8a7307b657b21982cc))
+
 ## [0.3.25](https://github.com/joe-bor/FamilyHub/compare/family-hub-v0.3.24...family-hub-v0.3.25) (2026-07-25)
 
 

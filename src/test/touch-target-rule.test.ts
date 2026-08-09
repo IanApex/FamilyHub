@@ -1,4 +1,4 @@
-import { globSync, readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 /** Conditional 44px sizing is the defect this rule exists to prevent: a control
@@ -14,9 +14,12 @@ const ALLOWED = new Set<string>([]);
 
 describe("touch-target rule", () => {
   it("has no breakpoint-only 44px sizing left in components", () => {
-    const files = globSync("src/**/*.{ts,tsx}", { cwd: process.cwd() }).filter(
-      (f) => !f.includes(".test."),
-    );
+    const files = readdirSync(join(process.cwd(), "src"), {
+      encoding: "utf8",
+      recursive: true,
+    })
+      .filter((file) => /\.tsx?$/.test(file) && !file.includes(".test."))
+      .map((file) => join("src", file));
     const offenders = files.filter((f) => {
       if (ALLOWED.has(f)) return false;
       return BANNED.test(readFileSync(join(process.cwd(), f), "utf8"));

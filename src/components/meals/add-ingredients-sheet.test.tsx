@@ -107,9 +107,11 @@ describe("AddIngredientsSheet", () => {
     renderSheet(boardWithRecipeAndQuick());
 
     // Recipe group header for the Monday dinner recipe meal.
-    expect(
-      await screen.findByText(/Monday · Dinner — Sheet Pan Salmon/),
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Monday · Dinner — Sheet Pan Salmon/),
+      ).toBeInTheDocument();
+    });
 
     // Verbatim ingredient rows appear as editable inputs.
     expect(screen.getByDisplayValue("Salmon fillets")).toBeInTheDocument();

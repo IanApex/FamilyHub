@@ -26,6 +26,9 @@
       "biome check --write"
     ]
   },
+  "overrides": {
+    "tmp": "0.2.7"
+  },
   "dependencies": {
     "@fontsource/nunito": "^5.3.0",
     "@hookform/resolvers": "^5.7.1",

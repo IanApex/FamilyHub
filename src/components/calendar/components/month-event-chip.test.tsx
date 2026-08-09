@@ -12,8 +12,7 @@ const event = createTestEvent({
 
 function relativeLuminance(hex: string): number {
   const channels = hex.match(/[0-9a-f]{2}/gi);
-  if (!channels || channels.length !== 3)
-    throw new Error(`Invalid hex: ${hex}`);
+  if (channels?.length !== 3) throw new Error(`Invalid hex: ${hex}`);
   const [red, green, blue] = channels.map((channel) => {
     const value = Number.parseInt(channel, 16) / 255;
     return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
@@ -131,11 +130,12 @@ describe("MonthEventChip", () => {
     expect(chip).toHaveTextContent(/Unknown.*Spring break/);
   });
 
-  it.each(
-    Object.entries(colorMap),
-  )("%s solid member background meets AA with white text", (_name, colors) => {
-    expect(contrastRatio("#ffffff", colors.hex)).toBeGreaterThanOrEqual(4.5);
-  });
+  it.each(Object.entries(colorMap))(
+    "%s solid member background meets AA with white text",
+    (_name, colors) => {
+      expect(contrastRatio("#ffffff", colors.hex)).toBeGreaterThanOrEqual(4.5);
+    },
+  );
 
   it("renders all-day and recurrence markers as visual content", () => {
     render(

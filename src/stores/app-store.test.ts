@@ -211,30 +211,31 @@ describe("AppStore", () => {
   describe("recipe and meals handoff drafts", () => {
     const mealTypes: MealType[] = ["breakfast", "lunch", "dinner"];
 
-    it.each(
-      mealTypes,
-    )("starts meal placement from a recipe with lowercase meal type sample '%s'", (mealType) => {
-      useAppStore.getState().startMealPlacementFromRecipe({
-        recipeId: "recipe-123",
-        requestedAtWeekStartDate: "2026-06-07",
-        source: {
-          kind: "meals-slot",
-          dayIndex: 2,
-          mealType,
-        },
-      });
+    it.each(mealTypes)(
+      "starts meal placement from a recipe with lowercase meal type sample '%s'",
+      (mealType) => {
+        useAppStore.getState().startMealPlacementFromRecipe({
+          recipeId: "recipe-123",
+          requestedAtWeekStartDate: "2026-06-07",
+          source: {
+            kind: "meals-slot",
+            dayIndex: 2,
+            mealType,
+          },
+        });
 
-      expect(useAppStore.getState().activeModule).toBe("meals");
-      expect(useAppStore.getState().mealPlacementDraft).toEqual({
-        recipeId: "recipe-123",
-        requestedAtWeekStartDate: "2026-06-07",
-        source: {
-          kind: "meals-slot",
-          dayIndex: 2,
-          mealType,
-        },
-      });
-    });
+        expect(useAppStore.getState().activeModule).toBe("meals");
+        expect(useAppStore.getState().mealPlacementDraft).toEqual({
+          recipeId: "recipe-123",
+          requestedAtWeekStartDate: "2026-06-07",
+          source: {
+            kind: "meals-slot",
+            dayIndex: 2,
+            mealType,
+          },
+        });
+      },
+    );
 
     it("consumes the meal placement draft and clears it", () => {
       useAppStore.getState().startMealPlacementFromRecipe({

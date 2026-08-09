@@ -455,14 +455,16 @@ describe("restorePersistedClient", () => {
     ]);
 
     const restored = restorePersistedClient(client);
+    expect(restored).toBeDefined();
+    if (!restored) throw new Error("Expected persisted client to be restored");
     const events = (
-      restored?.clientState.queries[0].state.data as {
+      restored.clientState.queries[0].state.data as {
         data: CalendarEvent[];
       }
     ).data;
 
     // One bad event must not discard the whole month's offline calendar.
-    expect(restored?.clientState.queries).toHaveLength(1);
+    expect(restored.clientState.queries).toHaveLength(1);
     expect(events).toHaveLength(1);
     expect(events[0].id).toBe("evt-1");
   });

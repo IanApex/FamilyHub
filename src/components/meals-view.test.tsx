@@ -1239,40 +1239,43 @@ describe("MealsView", () => {
   it.each([
     ["move", "Move meal", "Move here"],
     ["duplicate", "Duplicate meal", "Duplicate here"],
-  ])("prompts when trying to %s into an extras-only slot", async (_kind, actionLabel, confirmLabel) => {
-    const board = withExtrasOnlyDinnerSlot(
-      createOccupiedMealsBoard(),
-      2,
-      "Garlic bread",
-    );
-    seedMockMealsBoard(board);
-    const { user } = renderWithUser(
-      <MealEditorSheet
-        isOpen
-        slotId={{
-          weekStartDate: board.weekStartDate,
-          dayIndex: 1,
-          mealType: "dinner",
-        }}
-        board={board}
-        readOnly={false}
-        onOpenChange={vi.fn()}
-      />,
-    );
+  ])(
+    "prompts when trying to %s into an extras-only slot",
+    async (_kind, actionLabel, confirmLabel) => {
+      const board = withExtrasOnlyDinnerSlot(
+        createOccupiedMealsBoard(),
+        2,
+        "Garlic bread",
+      );
+      seedMockMealsBoard(board);
+      const { user } = renderWithUser(
+        <MealEditorSheet
+          isOpen
+          slotId={{
+            weekStartDate: board.weekStartDate,
+            dayIndex: 1,
+            mealType: "dinner",
+          }}
+          board={board}
+          readOnly={false}
+          onOpenChange={vi.fn()}
+        />,
+      );
 
-    await user.click(screen.getByRole("button", { name: actionLabel }));
-    await user.click(screen.getByRole("button", { name: confirmLabel }));
+      await user.click(screen.getByRole("button", { name: actionLabel }));
+      await user.click(screen.getByRole("button", { name: confirmLabel }));
 
-    expect(
-      screen.getByText("That slot already has a meal"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Replace primary" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Add as extra" }),
-    ).toBeInTheDocument();
-  });
+      expect(
+        screen.getByText("That slot already has a meal"),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Replace primary" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Add as extra" }),
+      ).toBeInTheDocument();
+    },
+  );
 
   it("removes a planned meal from the editor", async () => {
     const board = createOccupiedMealsBoard();

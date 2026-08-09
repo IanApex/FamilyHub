@@ -339,34 +339,35 @@ describe("EventForm", () => {
     it.each([
       { endTime: "09:00", state: "equal to start" },
       { endTime: "08:30", state: "before start" },
-    ])("uses a one-hour duration when the current end time is $state", async ({
-      endTime,
-    }) => {
-      const { user } = renderWithUser(
-        <EventForm
-          mode="edit"
-          defaultValues={timedEvent({ endTime })}
-          onSubmit={mockOnSubmit}
-          onCancel={mockOnCancel}
-        />,
-      );
+    ])(
+      "uses a one-hour duration when the current end time is $state",
+      async ({ endTime }) => {
+        const { user } = renderWithUser(
+          <EventForm
+            mode="edit"
+            defaultValues={timedEvent({ endTime })}
+            onSubmit={mockOnSubmit}
+            onCancel={mockOnCancel}
+          />,
+        );
 
-      await changeHourWithTimePicker(user, /9:00 AM/i, "11");
+        await changeHourWithTimePicker(user, /9:00 AM/i, "11");
 
-      expect(
-        screen.getByRole("button", { name: /11:00 AM/i }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole("button", { name: /12:00 PM/i }),
-      ).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /11:00 AM/i }),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /12:00 PM/i }),
+        ).toBeInTheDocument();
 
-      await expect(submitEditForm(user)).resolves.toEqual(
-        expect.objectContaining({
-          startTime: "11:00",
-          endTime: "12:00",
-        }),
-      );
-    });
+        await expect(submitEditForm(user)).resolves.toEqual(
+          expect.objectContaining({
+            startTime: "11:00",
+            endTime: "12:00",
+          }),
+        );
+      },
+    );
 
     it("shifts both start and end times when nudging the start later", async () => {
       const { user } = renderWithUser(
@@ -482,49 +483,47 @@ describe("EventForm", () => {
         startDisplay: /11:45 PM/i,
         endDisplay: /11:59 PM/i,
       },
-    ])("does not let an end nudge move $endTime at or before $startTime", async ({
-      startTime,
-      endTime,
-      startDisplay,
-      endDisplay,
-    }) => {
-      const { user } = renderWithUser(
-        <EventForm
-          mode="edit"
-          defaultValues={timedEvent({
+    ])(
+      "does not let an end nudge move $endTime at or before $startTime",
+      async ({ startTime, endTime, startDisplay, endDisplay }) => {
+        const { user } = renderWithUser(
+          <EventForm
+            mode="edit"
+            defaultValues={timedEvent({
+              startTime,
+              endTime,
+            })}
+            onSubmit={mockOnSubmit}
+            onCancel={mockOnCancel}
+          />,
+        );
+
+        await user.click(
+          screen.getByRole("button", {
+            name: "End time earlier by 15 minutes",
+          }),
+        );
+
+        expect(
+          screen.getByRole("button", { name: startDisplay }),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: endDisplay }),
+        ).toBeInTheDocument();
+
+        const submitted = await submitEditForm(user);
+
+        expect(submitted).toEqual(
+          expect.objectContaining({
             startTime,
             endTime,
-          })}
-          onSubmit={mockOnSubmit}
-          onCancel={mockOnCancel}
-        />,
-      );
-
-      await user.click(
-        screen.getByRole("button", {
-          name: "End time earlier by 15 minutes",
-        }),
-      );
-
-      expect(
-        screen.getByRole("button", { name: startDisplay }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole("button", { name: endDisplay }),
-      ).toBeInTheDocument();
-
-      const submitted = await submitEditForm(user);
-
-      expect(submitted).toEqual(
-        expect.objectContaining({
-          startTime,
-          endTime,
-        }),
-      );
-      expect(timeToMinutes(submitted.endTime)).toBeGreaterThan(
-        timeToMinutes(submitted.startTime),
-      );
-    });
+          }),
+        );
+        expect(timeToMinutes(submitted.endTime)).toBeGreaterThan(
+          timeToMinutes(submitted.startTime),
+        );
+      },
+    );
 
     it("renders accessible 44px nudge controls for both time fields", () => {
       render(

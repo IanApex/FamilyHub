@@ -45,7 +45,7 @@ jobs:
       - name: Run E2E tests (real backend)
         run: npm run test:e2e
       - name: Stop backend container
-        if: always()
+        if: always() && env.BE_IMAGE_TAG != ''
         run: docker compose -f docker-compose.e2e.yml down
       - run: npm run build
       - name: Check bundle size budget

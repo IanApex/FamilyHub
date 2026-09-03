@@ -44,3 +44,6 @@ docs/VERSIONING-WALKTHROUGH.md
 
 # Local Calendar screenshot evidence (PR attachments, never source)
 .calendar-evidence/
+
+# Self-host deploy config (the *.example templates are committed)
+deploy/*.env

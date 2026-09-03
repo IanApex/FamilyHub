@@ -1,0 +1,24 @@
+services:
+  api:
+    image: ghcr.io/joe-bor/family-hub-api:${BE_IMAGE_TAG:?BE_IMAGE_TAG must be set}
+    restart: unless-stopped
+    # Loopback only. A bare "8080:8080" makes docker-proxy listen on 0.0.0.0 and
+    # serve the API over plain HTTP on the public interface, bypassing nginx/TLS.
+    # UFW does not prevent this — Docker inserts iptables rules ahead of it.
+    ports:
+      - "127.0.0.1:8080:8080"
+    env_file:
+      - .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/api/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

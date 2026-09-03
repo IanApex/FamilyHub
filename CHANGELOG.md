@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.27](https://github.com/IanApex/FamilyHub/compare/family-hub-v0.3.26...family-hub-v0.3.27) (2026-09-03)
+
+
+### Features
+
+* **scripts:** add school lunch and calendar importers ([c2b81c9](https://github.com/IanApex/FamilyHub/commit/c2b81c9587b7935d47ae1a7b3edab135cbec4033))
+
+
+### Bug Fixes
+
+* **calendar:** surface family members created outside the browser ([6fb603c](https://github.com/IanApex/FamilyHub/commit/6fb603cf21cdb3f215240b505a2fd9f71a5762d6))
+
 ## [0.3.26](https://github.com/joe-bor/FamilyHub/compare/family-hub-v0.3.25...family-hub-v0.3.26) (2026-08-09)
 
 

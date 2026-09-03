@@ -92,6 +92,7 @@ function resetAllStores(): void {
     calendarView: "weekly",
     hasUserSetView: false,
     filter: { selectedMembers: [], showAllDayEvents: true },
+    knownMemberIds: [],
     isAddEventModalOpen: false,
     dayRailHidden: false,
     addEventDefaults: null,

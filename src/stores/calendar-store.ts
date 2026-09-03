@@ -10,6 +10,12 @@ interface CalendarState {
   calendarView: CalendarViewType;
   hasUserSetView: boolean; // Track if user explicitly changed view (for smart defaulting)
   filter: FilterState;
+  /**
+   * Member ids this filter has already seen. Lets `syncMembers` tell a member
+   * the user deliberately deselected from one that is genuinely new, so new
+   * members become visible without resurrecting hidden ones.
+   */
+  knownMemberIds: string[];
   isAddEventModalOpen: boolean;
   /** User preference: hide the Day view mini-month rail even when it would fit. */
   dayRailHidden: boolean;
@@ -40,6 +46,7 @@ interface CalendarState {
   toggleAllMembers: (allMemberIds: string[]) => void;
   toggleAllDayEvents: () => void;
   initializeSelectedMembers: (memberIds: string[]) => void;
+  syncMembers: (currentMemberIds: string[]) => void;
 
   // Modal actions
   openAddEventModal: (defaultValues?: Partial<EventFormData>) => void;
@@ -65,6 +72,7 @@ export const useCalendarStore = create<CalendarState>()(
         selectedMembers: [], // Will be initialized when family members are loaded
         showAllDayEvents: true,
       },
+      knownMemberIds: [],
       isAddEventModalOpen: false,
       dayRailHidden: false,
       addEventDefaults: null,
@@ -206,6 +214,58 @@ export const useCalendarStore = create<CalendarState>()(
         });
       },
 
+      syncMembers: (currentMemberIds) => {
+        if (currentMemberIds.length === 0) return;
+        const { filter, knownMemberIds } = get();
+
+        const currentSet = new Set(currentMemberIds);
+        const stillValid = filter.selectedMembers.filter((id) =>
+          currentSet.has(id),
+        );
+
+        // Nothing selected, or every selection points at a removed member.
+        if (stillValid.length === 0) {
+          set({
+            filter: { ...filter, selectedMembers: currentMemberIds },
+            knownMemberIds: currentMemberIds,
+          });
+          return;
+        }
+
+        // Members that appeared since the last sync default to visible, so a
+        // person added on another device (or by an import script) is not
+        // silently filtered out. Anyone already known stays hidden if the user
+        // deselected them.
+        //
+        // With nothing recorded yet (state persisted before this list existed)
+        // adopt the current roster as the baseline and change no selection —
+        // otherwise an intentional deselection would be undone once.
+        const nextSelected =
+          knownMemberIds.length === 0
+            ? stillValid
+            : [
+                ...stillValid,
+                ...currentMemberIds.filter(
+                  (id) => !knownMemberIds.includes(id),
+                ),
+              ];
+
+        const sameSelection =
+          nextSelected.length === filter.selectedMembers.length &&
+          nextSelected.every((id, i) => id === filter.selectedMembers[i]);
+        const sameKnown =
+          currentMemberIds.length === knownMemberIds.length &&
+          currentMemberIds.every((id, i) => id === knownMemberIds[i]);
+        if (sameSelection && sameKnown) return;
+
+        set({
+          ...(sameSelection
+            ? {}
+            : { filter: { ...filter, selectedMembers: nextSelected } }),
+          ...(sameKnown ? {} : { knownMemberIds: currentMemberIds }),
+        });
+      },
+
       toggleAllDayEvents: () => {
         const { filter } = get();
         set({
@@ -242,6 +302,7 @@ export const useCalendarStore = create<CalendarState>()(
       // Persist filter and view preferences
       partialize: (state) => ({
         filter: state.filter,
+        knownMemberIds: state.knownMemberIds,
         calendarView: state.calendarView,
         hasUserSetView: state.hasUserSetView,
         dayRailHidden: state.dayRailHidden,
@@ -363,5 +424,6 @@ export const useFilterPillsState = () =>
       toggleAllMembers: state.toggleAllMembers,
       toggleAllDayEvents: state.toggleAllDayEvents,
       initializeSelectedMembers: state.initializeSelectedMembers,
+      syncMembers: state.syncMembers,
     })),
   );

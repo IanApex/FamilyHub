@@ -14,25 +14,14 @@ export function FamilyFilterPills() {
     toggleMember,
     toggleAllMembers,
     toggleAllDayEvents,
-    initializeSelectedMembers,
+    syncMembers,
   } = useFilterPillsState();
 
-  // Initialize selected members on first load or when persisted filter is stale
+  // Reconcile the persisted filter with the current family: seed it on first
+  // load, drop removed members, and show members added since the last sync.
   useEffect(() => {
-    if (familyMembers.length === 0) return;
-
-    const currentMemberIds = familyMembers.map((m) => m.id);
-
-    // Check if any selected member still exists in the actual family
-    const hasValidSelection = filter.selectedMembers.some((id) =>
-      currentMemberIds.includes(id),
-    );
-
-    if (filter.selectedMembers.length === 0 || !hasValidSelection) {
-      // First load or all selected members are stale → select all
-      initializeSelectedMembers(currentMemberIds);
-    }
-  }, [familyMembers, filter.selectedMembers, initializeSelectedMembers]);
+    syncMembers(familyMembers.map((m) => m.id));
+  }, [familyMembers, syncMembers]);
 
   const allSelected = filter.selectedMembers.length === familyMembers.length;
   const noneSelected = filter.selectedMembers.length === 0;

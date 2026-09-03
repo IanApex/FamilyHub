@@ -78,7 +78,13 @@ export function readFamilyFromStorage(): FamilyData | null {
  */
 export function syncFamilyFromStorage(queryClient: QueryClient): void {
   const family = readFamilyFromStorage();
-  queryClient.setQueryData<FamilyApiResponse>(familyKeys.family(), {
-    data: family,
-  });
+  queryClient.setQueryData<FamilyApiResponse>(
+    familyKeys.family(),
+    { data: family },
+    // `updatedAt: 0` keeps this seed stale. Without it `setQueryData` stamps
+    // the cache as fresh right now, and `useFamily`'s 5-minute staleTime then
+    // suppresses the mount refetch — so members added outside this browser
+    // (a script, another device) never appeared, even across reloads.
+    { updatedAt: 0 },
+  );
 }

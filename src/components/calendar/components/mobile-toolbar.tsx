@@ -21,25 +21,15 @@ export function MobileToolbar({ members }: MobileToolbarProps) {
   const setCalendarView = useCalendarStore((s) => s.setCalendarView);
   const filter = useCalendarStore((s) => s.filter);
   const toggleMember = useCalendarStore((s) => s.toggleMember);
-  const initializeSelectedMembers = useCalendarStore(
-    (s) => s.initializeSelectedMembers,
-  );
+  const syncMembers = useCalendarStore((s) => s.syncMembers);
   const goToPrevious = useCalendarStore((s) => s.goToPrevious);
   const goToNext = useCalendarStore((s) => s.goToNext);
 
-  // Initialize selected members on first load or when persisted filter is stale
+  // Reconcile the persisted filter with the current family: seed it on first
+  // load, drop removed members, and show members added since the last sync.
   useEffect(() => {
-    if (members.length === 0) return;
-
-    const currentMemberIds = members.map((m) => m.id);
-    const hasValidSelection = filter.selectedMembers.some((id) =>
-      currentMemberIds.includes(id),
-    );
-
-    if (filter.selectedMembers.length === 0 || !hasValidSelection) {
-      initializeSelectedMembers(currentMemberIds);
-    }
-  }, [members, filter.selectedMembers, initializeSelectedMembers]);
+    syncMembers(members.map((m) => m.id));
+  }, [members, syncMembers]);
 
   return (
     // Controls row — the title / Today / Menu row now lives in the shared

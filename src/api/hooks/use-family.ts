@@ -71,7 +71,14 @@ export function useFamily(
 ) {
   return useQuery({
     queryKey: familyKeys.family(),
-    queryFn: familyService.getFamily,
+    // Write-through on fetch so the localStorage seed tracks the server rather
+    // than only in-app mutations. Lives in the queryFn (not an effect) so it
+    // runs once per fetch no matter how many components read this query.
+    queryFn: async () => {
+      const response = await familyService.getFamily();
+      writeFamilyToStorage(response.data ?? null);
+      return response;
+    },
     staleTime: 5 * 60 * 1000, // 5 minutes
     // Seed from localStorage for instant startup
     initialData: () => {

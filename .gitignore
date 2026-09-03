@@ -47,3 +47,4 @@ docs/VERSIONING-WALKTHROUGH.md
 
 # Self-host deploy config (the *.example templates are committed)
 deploy/*.env
+deploy/**/.env

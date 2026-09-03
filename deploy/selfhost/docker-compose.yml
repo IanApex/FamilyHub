@@ -1,0 +1,53 @@
+name: familyhub
+
+# Self-hosted stack for a machine behind Cloudflare Tunnel.
+#
+# Nothing here publishes a port to the host or the LAN. Cloudflare reaches the
+# `web` container over the internal compose network via the `tunnel` container's
+# outbound connection, so the router needs no forwarded ports.
+
+services:
+  api:
+    image: ghcr.io/joe-bor/family-hub-api:${BE_IMAGE_TAG:-1.9.0}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/api/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  web:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    depends_on:
+      - api
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      # The built frontend. Run `npm run build` in the repo root to refresh it.
+      - ../../dist:/usr/share/nginx/html:ro
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    depends_on:
+      - web
+    command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN:?TUNNEL_TOKEN must be set in deploy/selfhost/.env}
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
